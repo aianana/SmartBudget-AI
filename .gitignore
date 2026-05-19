@@ -1,5 +1,25 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+venv/
+.env/
+
+# Node.js
 node_modules/
-.env
+
+# IDE
+.idea/
+.vscode/
+
+# Build
 dist/
 build/
-.idea/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
