@@ -36,7 +36,7 @@ SmartBudget AI helps users:
 - React / Next.js
 
 ### Backend
-- Python FastAPI
+- Node.js / Express
 
 ### AI
 - OpenAI API
