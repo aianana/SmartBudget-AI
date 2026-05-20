@@ -1,21 +1,12 @@
-# Dependencies
 node_modules/
-
-# Environment
 .env
-
-# Logs
 logs
 *.log
 npm-debug.log*
-
-# Build
 dist/
 build/
-
-# IDE
 .idea/
 .vscode/
-
-# OS
 .DS_Store
+.env.local
+.env.production
