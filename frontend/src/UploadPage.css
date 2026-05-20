@@ -46,3 +46,5 @@
     display: none;
 }
 
+.dropzone.active { border-color: #3b82f6; background-color: #eff6ff; transform: scale(1.02); }
+.dropzone.active .dropzone-icon { color: #3b82f6; }
