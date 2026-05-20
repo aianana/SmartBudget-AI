@@ -90,6 +90,55 @@ app.get('/api/transactions', async (req, res) => {
     }
 });
 
+// --- ИНТЕГРАЦИЯ С ИИ (MOCK / ЗАГЛУШКА) ---
+
+// Хитрый симулятор нейросети. Он посмотрит на траты и выдаст логичный совет
+function generateMockAiAdvice(transactions) {
+    if (transactions.length === 0) {
+        return "У вас пока нет транзакций для анализа. Загрузите выписку!";
+    }
+
+    // Считаем общую сумму трат
+    const totalSpend = transactions.reduce((sum, t) => sum + t.amount, 0);
+    
+    // Ищем самую дорогую покупку
+    const maxTransaction = transactions.reduce((max, t) => t.amount > max.amount ? t : max, transactions[0]);
+
+    // Генерируем "умный" ответ от ИИ
+    return `Анализ бюджета готов. Всего вы потратили: ${totalSpend.toFixed(2)} сом. 
+    Обратите внимание на категорию "${maxTransaction.category}", где самая крупная трата составила ${maxTransaction.amount} сом (${maxTransaction.description}). 
+    Совет: Попробуйте сократить расходы на эту категорию на 10% в следующем месяце, чтобы сохранить баланс.`;
+}
+
+// Эндпоинт, который запускает анализ трат пользователя
+app.post('/api/users/:id/analyze', async (req, res) => {
+    try {
+        const userId = parseInt(req.params.id); // Берем id пользователя из адреса
+
+        // 1. Достаем из базы все транзакции этого пользователя
+        const transactions = await prisma.transaction.findMany({
+            where: { userId: userId }
+        });
+
+        // 2. Отправляем их в наш "ИИ" и получаем совет
+        const aiMessage = generateMockAiAdvice(transactions);
+
+        // 3. Сохраняем этот совет в базу данных в таблицу Advice
+        const savedAdvice = await prisma.advice.create({
+            data: {
+                message: aiMessage,
+                userId: userId
+            }
+        });
+
+        // 4. Возвращаем результат
+        res.json(savedAdvice);
+    } catch (error) {
+        console.error("Ошибка при ИИ-анализе:", error);
+        res.status(500).json({ error: "Не удалось провести анализ бюджета" });
+    }
+});
+
 app.listen(PORT, () => {
     console.log(`Сервер бэкенда запущен на порту ${PORT}`);
 });
