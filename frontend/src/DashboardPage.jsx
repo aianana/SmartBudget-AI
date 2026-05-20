@@ -1,14 +1,23 @@
 import React, {useState, useEffect} from 'react';
-import {PieChart, Pie, Cell, Tooltip, Legend, ResponsiveContainer} from 'recharts';
+import {PieChart, Pie, Cell, Tooltip, Legend, ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid} from 'recharts';
 import './DashboardPage.css';
 
-const categoryData = [
+const categoryData = [ //временные данные
   {name: 'Еда и продукты', value: 15000 },
   {name: 'Жилье', value: 25000},
   {name: 'Транспорт', value: 5000},
   {name: 'Развлечения', value: 8000},
   {name: 'Подписки', value: 2000},
 ];
+
+const monthlyData = [ //временные данные
+  {name: 'Янв', Расходы: 45000 },
+  {name: 'Фев', Расходы: 52000 },
+  {name: 'Март', Расходы: 48000 },
+  {name: 'Апр', Расходы: 61000 },
+  {name: 'Май', Расходы: 55000 },
+];
+
 const COLORS = ['#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6'];
 
 export default function DashboardPage() {
@@ -31,7 +40,21 @@ export default function DashboardPage() {
               </PieChart>
             </ResponsiveContainer>
           </div>
-        </div>
+        </div> 
+          <div className="chart-card">
+            <h2 className="chart-title">Динамика по месяцам</h2>
+            <div className="chart-wrapper">
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart data={monthlyData} margin={{ top: 20, right: 30, left: 0, bottom: 5 }}>
+                  <CartesianGrid strokeDasharray="3 3" vertical={false} />
+                  <XAxis dataKey="name" axisLine={false} tickLine={false} />
+                  <YAxis axisLine={false} tickLine={false} />
+                  <Tooltip cursor={{fill: '#f3f4f6'}} formatter={(value) => `${value} ₽`} />
+                 <Bar dataKey="Расходы" fill="#3b82f6" radius={[4, 4, 0, 0]} barSize={40} />
+               </BarChart>
+              </ResponsiveContainer>
+            </div>
+          </div>
       </div>
     </div>
   );
