@@ -90,21 +90,15 @@ app.get('/api/transactions', async (req, res) => {
     }
 });
 
-// --- ИНТЕГРАЦИЯ С ИИ (MOCK / ЗАГЛУШКА) ---
-
-// Хитрый симулятор нейросети. Он посмотрит на траты и выдаст логичный совет
 function generateMockAiAdvice(transactions) {
     if (transactions.length === 0) {
         return "У вас пока нет транзакций для анализа. Загрузите выписку!";
     }
 
-    // Считаем общую сумму трат
     const totalSpend = transactions.reduce((sum, t) => sum + t.amount, 0);
     
-    // Ищем самую дорогую покупку
     const maxTransaction = transactions.reduce((max, t) => t.amount > max.amount ? t : max, transactions[0]);
 
-    // Генерируем "умный" ответ от ИИ
     return `Анализ бюджета готов. Всего вы потратили: ${totalSpend.toFixed(2)} сом. 
     Обратите внимание на категорию "${maxTransaction.category}", где самая крупная трата составила ${maxTransaction.amount} сом (${maxTransaction.description}). 
     Совет: Попробуйте сократить расходы на эту категорию на 10% в следующем месяце, чтобы сохранить баланс.`;
