@@ -7,7 +7,7 @@ export default function UploadPage() {
     <div className="upload-container">
       <div className="upload-header">
         <h1>SmartBudget AI</h1>
-        <p>Загрузите банковскую выписку (CSV или Excel) для умной аналитики</p>
+        <p>Загрузите банковскую выписку для аналитики</p>
       </div>
       <div className="dropzone">
         <UploadCloud size={64} color="#94a3b8" />
