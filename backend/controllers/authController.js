@@ -1,0 +1,53 @@
+const prisma = require('../db');
+const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
+
+const JWT_SECRET = 'super_secret_key_123';
+
+const register = async (req, res) => {
+    try {
+        const { email, name, password } = req.body;
+
+        const candidate = await prisma.user.findUnique({ where: { email } });
+        if (candidate) {
+            return res.status(400).json({ error: "Пользователь с таким email уже существует" });
+        }
+
+        const hashedPassword = await bcrypt.hash(password, 10);
+
+        const newUser = await prisma.user.create({
+            data: { email, name, password: hashedPassword }
+        });
+
+        res.status(201).json({ message: "Пользователь успешно зарегистрирован" });
+    } catch (error) {
+        res.status(500).json({ error: "Ошибка при регистрации" });
+    }
+};
+
+const login = async (req, res) => {
+    try {
+        const { email, password } = req.body;
+
+        const user = await prisma.user.findUnique({ where: { email } });
+        if (!user) {
+            return res.status(400).json({ error: "Неверный email или пароль" });
+        }
+
+        const isMatch = await bcrypt.compare(password, user.password);
+        if (!isMatch) {
+            return res.status(400).json({ error: "Неверный email или пароль" });
+        }
+
+        const token = jwt.sign({ userId: user.id }, JWT_SECRET, { expiresIn: '24h' });
+
+        res.json({
+            token,
+            user: { id: user.id, email: user.email, name: user.name }
+        });
+    } catch (error) {
+        res.status(500).json({ error: "Ошибка при входе" });
+    }
+};
+
+module.exports = { register, login, JWT_SECRET };

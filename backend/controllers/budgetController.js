@@ -24,12 +24,13 @@ const getUsers = async (req, res) => {
     }
 };
 
-
 const uploadStatement = (req, res) => {
     if (!req.file) {
         return res.status(400).json({ error: "Пожалуйста, загрузите файл" });
     }
     const ext = path.extname(req.file.originalname).toLowerCase();
+    
+    const userId = req.userId; 
     
     let results = [];
 
@@ -39,7 +40,7 @@ const uploadStatement = (req, res) => {
                 .pipe(csv())
                 .on('data', (data) => results.push(data))
                 .on('end', async () => {
-                    await processAndSaveData(results, req.file.path, res);
+                    await processAndSaveData(results, req.file.path, userId, res); 
                 });
         } 
         else if (ext === '.xlsx' || ext === '.xls') {
@@ -48,7 +49,7 @@ const uploadStatement = (req, res) => {
             
             results = xlsx.utils.sheet_to_json(workbook.Sheets[sheetName]);
             
-            processAndSaveData(results, req.file.path, res);
+            processAndSaveData(results, req.file.path, userId, res); 
         } 
         else if (ext === '.pdf') {
             fs.unlinkSync(req.file.path);
@@ -67,7 +68,7 @@ const uploadStatement = (req, res) => {
     }
 };
 
-async function processAndSaveData(results, filePath, res) {
+async function processAndSaveData(results, filePath, userId, res) { 
     try {
         if (fs.existsSync(filePath)) {
             fs.unlinkSync(filePath); 
@@ -78,7 +79,7 @@ async function processAndSaveData(results, filePath, res) {
             date: new Date(row.date || row.Дата || new Date()),
             category: row.category || row.Категория || "Другое",
             description: row.description || row.Описание || "",
-            userId: 1
+            userId: userId 
         }));
 
         const savedTransactions = await prisma.transaction.createMany({
@@ -97,7 +98,10 @@ async function processAndSaveData(results, filePath, res) {
 
 const getTransactions = async (req, res) => {
     try {
+        const userId = req.userId; 
+
         const transactions = await prisma.transaction.findMany({
+            where: { userId: userId }, 
             orderBy: { date: 'desc' }
         });
         res.json(transactions);
@@ -108,7 +112,7 @@ const getTransactions = async (req, res) => {
 
 const analyzeBudget = async (req, res) => {
     try {
-        const userId = parseInt(req.params.id);
+        const userId = req.userId; 
         const transactions = await prisma.transaction.findMany({ where: { userId } });
 
         if (transactions.length === 0) {
@@ -122,13 +126,11 @@ const analyzeBudget = async (req, res) => {
 
         /*
         // Замени 'http://localhost:5000/analyze' на реальный адрес Python-сервиса
-        
         const response = await axios.post('http://localhost:5000/analyze', {
             transactions: transactions,
             totalSpend: totalSpend
         });
-        
-        aiMessage = response.data.advice; /
+        aiMessage = response.data.advice; 
         */
 
         const savedAdvice = await prisma.advice.create({
@@ -142,11 +144,27 @@ const analyzeBudget = async (req, res) => {
     }
 };
 
+const getAdvices = async (req, res) => {
+    try {
+        const userId = req.userId; 
+
+        const advices = await prisma.advice.findMany({
+            where: { userId: userId },
+            orderBy: { createdAt: 'desc' }
+        });
+
+        res.json(advices);
+    } catch (error) {
+        console.error("Ошибка при получении советов:", error);
+        res.status(500).json({ error: "Не удалось загрузить советы от AI" });
+    }
+};
+
 module.exports = {
     createUser,
     getUsers,
     uploadStatement,
     getTransactions,
     analyzeBudget,
-    getAdvices
+    getAdvices 
 };

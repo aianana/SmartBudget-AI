@@ -1,8 +1,75 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Тест Загрузки с Токеном</title>
+    <style>
+        body { font-family: sans-serif; padding: 20px; }
+        input, button { margin-top: 10px; padding: 5px; }
+        #result { margin-top: 20px; font-weight: bold; color: blue; }
+    </style>
+</head>
 <body>
-    <form action="http://localhost:3000/api/upload" method="post" enctype="multipart/form-data">
-        <input type="file" name="statement"> <button type="submit">Загрузить выписку</button>
-    </form>
+    <h2>Загрузка выписки (защищенный путь)</h2>
+
+    <label>1. Вставь свой токен (из Thunder Client):</label><br>
+    <input type="text" id="tokenInput" placeholder="eyJhbGciOiJIUzI1Ni..." style="width: 400px;"><br><br>
+
+    <label>2. Выбери файл (CSV или Excel):</label><br>
+    <input type="file" id="fileInput" accept=".csv, .xlsx, .xls"><br><br>
+
+    <button onclick="uploadFile()">Отправить на сервер</button>
+
+    <p id="result"></p>
+
+    <script>
+        async function uploadFile() {
+            const token = document.getElementById('tokenInput').value.trim();
+            const fileInput = document.getElementById('fileInput');
+            const resultText = document.getElementById('result');
+
+            if (!token) {
+                resultText.style.color = "red";
+                resultText.innerText = "Ошибка: Сначала скопируй и вставь токен!";
+                return;
+            }
+
+            if (fileInput.files.length === 0) {
+                resultText.style.color = "red";
+                resultText.innerText = "Ошибка: Выбери файл!";
+                return;
+            }
+
+            resultText.style.color = "black";
+            resultText.innerText = "Отправка...";
+
+            const formData = new FormData();
+            formData.append('statement', fileInput.files[0]);
+
+            try {
+                
+                const response = await fetch('http://localhost:3000/api/upload', {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': 'Bearer ' + token 
+                    },
+                    body: formData
+                });
+
+                const data = await response.json();
+                
+                if (response.ok) {
+                    resultText.style.color = "green";
+                    resultText.innerText = "Успех: " + data.message + " (Сохранено строк: " + data.savedCount + ")";
+                } else {
+                    resultText.style.color = "red";
+                    resultText.innerText = "Ошибка сервера: " + (data.error || "Доступ запрещен");
+                }
+            } catch (error) {
+                resultText.style.color = "red";
+                resultText.innerText = "Ошибка сети! Сервер запущен?";
+            }
+        }
+    </script>
 </body>
 </html>
