@@ -14,6 +14,6 @@ app.get('/api/health', (req, res) => {
 
 app.use('/api', budgetRoutes);
 
-app.listen(PORT, () => {
+app.listen(PORT, '0.0.0.0', () => {
     console.log(`Сервер бэкенда запущен на порту ${PORT}`);
 });
