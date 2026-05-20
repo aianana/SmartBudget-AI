@@ -10,15 +10,21 @@ const categoryData = [ //временные данные
   {name: 'Подписки', value: 2000},
 ];
 
+const COLORS = ['#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6'];
+
 const monthlyData = [ //временные данные
-  {name: 'Янв', Расходы: 45000 },
-  {name: 'Фев', Расходы: 52000 },
-  {name: 'Март', Расходы: 48000 },
-  {name: 'Апр', Расходы: 61000 },
-  {name: 'Май', Расходы: 55000 },
+  {name: 'Янв', Расходы: 45000},
+  {name: 'Фев', Расходы: 52000},
+  {name: 'Март', Расходы: 48000},
+  {name: 'Апр', Расходы: 61000},
+  {name: 'Май', Расходы: 55000},
 ];
 
-const COLORS = ['#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6'];
+const aiTips = [
+  { id: 1, title: 'Оптимизация подписок', text: 'Мы заметили, что вы платите за 3 стриминговых сервиса. Отказ от одного сэкономит вам 800 сом в месяц.', },
+  { id: 2, title: 'Аномалия в категории "Еда"', text: 'В этом месяце траты на рестораны выросли на 30%. Рекомендуем готовить дома чаще на следующей неделе.', },
+  { id: 3, title: 'Умный резерв', text: 'Ваш средний остаток позволяет откладывать 10% дохода. SmartBudget рекомендует настроить автокопилку.', }
+];
 
 export default function DashboardPage() {
   return (
@@ -56,6 +62,21 @@ export default function DashboardPage() {
             </div>
           </div>
       </div>
+      <div className="ai-tips-section">
+  <h2 className="ai-section-title">
+    Инсайты от SmartBudget AI
+  </h2>
+  <div className="ai-tips-grid">
+    {aiTips.map((tip) => (
+      <div key={tip.id} className="tip-card">
+        <div className="tip-content">
+          <h3>{tip.title}</h3>
+          <p>{tip.text}</p>
+        </div>
+      </div>
+    ))}
+  </div>
+</div>
     </div>
   );
 }
