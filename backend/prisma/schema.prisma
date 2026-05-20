@@ -1,0 +1,40 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+// Указываем что используем PostgreSQL
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// Таблица пользователей
+model User {
+  id           Int           @id @default(autoincrement())
+  email        String        @unique
+  name         String?
+  transactions Transaction[] 
+  advices      Advice[]      
+}
+
+// Таблица транзакций 
+model Transaction {
+  id          Int      @id @default(autoincrement())
+  amount      Float    
+  date        DateTime 
+  category    String   
+  description String?  
+  
+  userId      Int      
+  user        User     @relation(fields: [userId], references: [id])
+}
+
+// Таблица советов от AI
+model Advice {
+  id        Int      @id @default(autoincrement())
+  message   String   
+  createdAt DateTime @default(now()) 
+  
+  userId    Int      
+  user      User     @relation(fields: [userId], references: [id])
+}
