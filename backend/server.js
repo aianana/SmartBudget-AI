@@ -110,20 +110,20 @@ function generateMockAiAdvice(transactions) {
     Совет: Попробуйте сократить расходы на эту категорию на 10% в следующем месяце, чтобы сохранить баланс.`;
 }
 
-// Эндпоинт, который запускает анализ трат пользователя
+
 app.post('/api/users/:id/analyze', async (req, res) => {
     try {
-        const userId = parseInt(req.params.id); // Берем id пользователя из адреса
+        const userId = parseInt(req.params.id); 
 
-        // 1. Достаем из базы все транзакции этого пользователя
+        
         const transactions = await prisma.transaction.findMany({
             where: { userId: userId }
         });
 
-        // 2. Отправляем их в наш "ИИ" и получаем совет
+        
         const aiMessage = generateMockAiAdvice(transactions);
 
-        // 3. Сохраняем этот совет в базу данных в таблицу Advice
+        
         const savedAdvice = await prisma.advice.create({
             data: {
                 message: aiMessage,
@@ -131,7 +131,6 @@ app.post('/api/users/:id/analyze', async (req, res) => {
             }
         });
 
-        // 4. Возвращаем результат
         res.json(savedAdvice);
     } catch (error) {
         console.error("Ошибка при ИИ-анализе:", error);
