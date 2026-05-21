@@ -15,7 +15,7 @@ services:
     env_file:
       - .env
       
- db:
+  db:
     image: postgres:15
     ports:
       - "5432:5432"
