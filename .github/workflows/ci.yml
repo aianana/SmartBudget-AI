@@ -2,9 +2,9 @@ name: CI
 
 on:
   push:
-    branches: [ main ]
+    branches: [main]
   pull_request:
-    branches: [ main ]
+    branches: [main]
 
 jobs:
   build:
@@ -14,8 +14,16 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Build backend
+      - name: Build backend Docker image
         run: docker build ./backend
 
-      - name: Build frontend
+      - name: Build frontend Docker image
         run: docker build ./frontend
+
+      - name: Install backend dependencies
+        working-directory: ./backend
+        run: npm install
+
+      - name: Run backend lint
+        working-directory: ./backend
+        run: npm run lint --if-present
