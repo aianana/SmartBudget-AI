@@ -16,12 +16,18 @@ export default function UploadPage() {
 
   const handleDrop = (e) => {
     e.preventDefault(); e.stopPropagation(); setDragActive(false);
-    if (e.dataTransfer.files && e.dataTransfer.files[0]) navigate('/dashboard');
+    if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+      const file = e.dataTransfer.files[0];
+      navigate('/login', { state: { uploadedFile: file } });
+    }
   };
 
   const handleChange = (e) => {
     e.preventDefault();
-    if (e.target.files && e.target.files[0]) navigate('/dashboard');
+    if (e.target.files && e.target.files[0]) {
+      const file = e.target.files[0];
+      navigate('/login', { state: { uploadedFile: file } });
+    }
   };
 
   return (

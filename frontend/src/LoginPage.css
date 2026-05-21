@@ -1,0 +1,124 @@
+    .login-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 90vh;
+    font-family: system-ui, sans-serif;
+    padding: 20px;
+    }
+
+    .login-card {
+    background: #ffffff;
+    padding: 40px;
+    border-radius: 24px;
+    width: 100%;
+    max-width: 420px;
+    border: 1px solid #f3f4f6;
+    box-shadow: 0 10px 30px -5px rgba(139, 92, 246, 0.15);
+    transition: transform 0.3s ease;
+    }
+
+    .login-card:hover {
+    transform: translateY(-4px);
+    }
+
+    .login-title {
+    font-size: 28px;
+    font-weight: 800;
+    text-align: center;
+    margin: 0 0 10px 0;
+    background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    }
+
+    .login-subtitle {
+    color: #6b7280;
+    text-align: center;
+    font-size: 14px;
+    margin-bottom: 30px;
+    }
+
+    .login-form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    }
+
+    .input-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    }
+
+    .input-group label {
+    font-size: 14px;
+    font-weight: 600;
+    color: #4b5563;
+    }
+
+    .input-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+    }
+
+    .input-icon {
+    position: absolute;
+    left: 14px;
+    color: #9ca3af;
+    }
+
+    .input-wrapper input {
+    width: 100%;
+    padding: 12px 14px 12px 42px;
+    border: 1.5px solid #e5e7eb;
+    border-radius: 12px;
+    font-size: 15px;
+    outline: none;
+    transition: all 0.2s ease;
+    }
+
+    .input-wrapper input:focus {
+    border-color: #8b5cf6;
+    box-shadow: 0 0 0 4px rgba(139, 92, 246, 0.1);
+    }
+
+    .login-submit-btn {
+    background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+    color: white;
+    border: none;
+    padding: 14px;
+    border-radius: 12px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: opacity 0.2s;
+    margin-top: 10px;
+    }
+
+    .login-submit-btn:hover {
+    opacity: 0.95;
+    }
+
+    .login-toggle-text {
+    text-align: center;
+    font-size: 14px;
+    color: #6b7280;
+    margin-top: 20px;
+    }
+
+    .login-toggle-btn {
+    background: none;
+    border: none;
+    color: #7c3aed;
+    font-weight: 600;
+    cursor: pointer;
+    padding: 0;
+    margin-left: 5px;
+    text-decoration: underline;
+    }
