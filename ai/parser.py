@@ -1,4 +1,3 @@
-# parser.py
 # Парсер выписок: Bakai (xlsx), Optima (pdf), MBank (pdf, xls), Simbank (pdf).
 
 import io
