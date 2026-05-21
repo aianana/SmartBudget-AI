@@ -1,6 +1,6 @@
-# analyzer.py
-# Считает статистику по транзакциям из 4 банков КР.
+# Считает статистику по транзакциям из всех 4 банков КР.
 
+import re
 from collections import defaultdict
 
 
@@ -14,22 +14,29 @@ CATEGORY_KEYWORDS = {
         "магазин dastem", "магазин керемет", "маркет керемет", "asia mall",
         "fresh box", "shoro", "магазин эльдорадо", "magazin eldorado",
         "арча", "ади мега", "ади ", "ади ",
+        "magnat", "магнат", "vts magnat", "vts asia", "vts gipermarket",
+        "gipermarket", "narodnyy", "народный", "duo маркет", "дуо маркет",
+        "дордой", "drippa",
+        "million gum", "алма гум", "гум", "тез ж", "umai групп",
+        "умай групп", "ryskulova", "di store",
     ],
 
-    # Кафе и столовые
+    #Кафе и столовые
     "Столовые и фастфуд": [
         "cantin stolovaya", "stolovaya", "cantin a", "cantin",
         "banda panda", "вок лагман", "вок ", "domino pizza", "dodo pizza",
-        "bimar", "snack time",
+        "bimar", "snack time", "k beauty", "kalyk akieva",
         "казына", "лагман", "kfc", "burger", "mcdonalds",
         "ques lavka", "shao-lin", "cooksoo", "mr.bbq", "vasabisushi",
         "kinobar",
+        "buffet", "буфет", "vts buffet", "mr ping", "карлсон", "karlson",
+        "onzha", "ionzha", "vendingovyy apparat snack", "snack",
     ],
 
-    #Кофейни
-    "Кофейни/Торты": [
+    # Кофейни
+    "Кофе": [
         "giraffe coffe", "куликовский", "куликовский фм", "coffee",
-        "starbucks", "кофейня", "espresso", "капучино", "shoro",
+        "starbucks", "кофейня", "espresso", "капучино",
     ],
 
     #Транспорт
@@ -38,25 +45,24 @@ CATEGORY_KEYWORDS = {
     ],
     "Транспорт (автобус Тулпар)": [
         "tulpar", "тулпар", "qr.tulpar.kg", "оплата за проезд",
-        "код транспорта",  # SimBank автобусные оплаты
+        "код транспорта", "покупка по qr - ",  # SimBank автобусные оплаты
     ],
 
-    #Доставка
+    # Доставка
     "Доставка еды": [
         "yandex.delivery", "yandex delivery", "glovo", "доставка еды",
     ],
 
-    #АЗС / Топливо
+    # АЗС / Топливо
     "АЗС / топливо": [
         "мунай пром", "мунай ", "азс ", "fuel", "газпром",
         "лукойл", "shell", "petrol", "топливо", "бензин",
     ],
 
-    #Связь и подписки
-    "Мобильная связь O!/MegaCom/Beeline": [
-        "o!", "o!bank", "o!den'gi", "o!:",
+    #Мобильная связь и подписки
+    "Мобильная связь MegaCom/Beeline/O!": [
         "мобильная связь", "sky mobile", "skymobile", "мегаком",
-        "beeline", "билайн", "о! связь",
+        "beeline", "билайн", "о! связь","o!", "o!bank", "o!den'gi", "o!:",
     ],
     "Подписки": [
         "spotify", "netflix", "youtube", "apple", "google", "icloud",
@@ -70,7 +76,7 @@ CATEGORY_KEYWORDS = {
         "эрайфарм", "лекарство",
     ],
 
-    #Онлайн шопинг
+    #Онлайн покупки
     "Онлайн шопинг": [
         "pinduoduo", "fft*pinduoduo", "aliexpress", "wildberries",
         "ozon", "amazon", "ebay", "asos",
@@ -78,18 +84,18 @@ CATEGORY_KEYWORDS = {
 
     # Красота / салоны
     "Красота и салоны": [
-        "k beauty", "salon", "салон", "barber",
+        "k beauty", "salon", "салон", "barber", "kampa.kg",
     ],
 
-    #Финансы (терминалы пополнения)
+    # Финансы (терминалы пополнения)
     "Пополнения наличными": [
-        "cash-in", "cash in", "кэшин",
-        "осмп", "оной", "пэй 24", "pay24",
+        "cash-in", "cash in", "оплата по единому qr", "кэшин",
+        "umai", "осмп", "оной", "пэй 24", "pay24",
         "гринтелеком", "оптима банк терминал", "bakai_",
         "nurterm", "оптима_",
     ],
 
-    #Переводы между банками
+    # Переводы между банками
     "Бакай Банк (переводы)": [
         "бакай банк пополнение", "пополнение с бакай",
         "по номеру телефона bakai", "bakai 778", "бакай24",
@@ -106,7 +112,7 @@ CATEGORY_KEYWORDS = {
         "qr.dengi.kg", "p2p.dengi.kg", "dengi.kg",
     ],
 
-    #Переводы людям
+    # Переводы людям
     "Переводы по QR (людям)": [
         "перевод по qr", "перевод по номеру телефона qr",
     ],
@@ -126,22 +132,41 @@ CATEGORY_KEYWORDS = {
         "кешбэк",
     ],
 
-    #QR-сервисы / ElQR / Finik
+    # QR-сервисы / ElQR / Finik
     "ElQR / Finik": [
         "elqr", "finik-qr", "finik", "elqr ",
     ],
 
-    #NambaPay
+    # NambaPay
     "NambaPay": [
         "nambaone.app", "namba",
     ],
 
-    #Игры
+    # Игры
     "Игры": [
         "steam", "playstation", "xbox", "epic games", "blizzard",
     ],
 
-    #Сервисы такси и доставки (платформы)
+    # Развлечения / кино
+    "Развлечения / кино": [
+        "cinematica", "синематика", "kinobar", "hobby park", "хобби парк",
+        "cinema", "кино", "concert", "концерт", "theatre", "театр",
+        "mega.", "mega ",  # MEGA - игровой/развлекательный сервис
+    ],
+
+    # Спорт и бассейн
+    "Спорт / бассейн": [
+        "basein", "бассейн", "deniz", "gym", "фитнес", "fitness",
+        "sport", "спорт", "бассейн дениз",
+    ],
+
+    # Госуслуги
+    "Госуслуги": [
+        "госуслуги", "оплата по qr госуслуги", "infocom", "тестирование",
+        "library", "библиотека", "rbdyu",
+    ],
+
+    # Сервисы доставки (платформы)
     "Сервисы доставки": [
         "lalafo", "яндекс еда", "yandex eda", "wolt",
     ],
@@ -155,6 +180,29 @@ def categorize(description: str) -> str:
         for kw in keywords:
             if kw in desc_lower:
                 return category
+
+    # Если не нашли по ключевым словам - проверяем паттерны
+
+    # ИП и ОсОО = оплата предпринимателю/компании (покупки)
+    if any(s in desc_lower for s in ["ип ", "осоо", "оао", "зао", "ооо",
+                                      "ип.", "abdyramanov", "казакбаев",
+                                      "умай групп", "borubaev", "jumashov"]):
+        return "Оплата ИП / магазины"
+
+    # Перевод физлицу по номеру телефона
+    if "перевод" in desc_lower and re.search(r"99\d{9}", description):
+        return "Переводы людям (по телефону)"
+
+    # "Имя Фам.:" или "Имя Фам." в начале (получатель-человек, MBank/Optima формат)
+    if re.match(r"^[А-ЯЁ][а-яёА-ЯЁ]+\s+[А-ЯЁ]\.", description):
+        return "Переводы людям (по телефону)"
+
+    # Короткое имя без пробелов ("Аза", "Узан") или ИМЯ З. (Simbank формат)
+    # Только буквы, 1-2 слова, до 20 символов = вероятно имя человека
+    stripped = description.strip()
+    if re.match(r"^[А-ЯЁ][а-яё]+(\s+[А-ЯЁ]\.?)?$", stripped) and len(stripped) <= 20:
+        return "Переводы людям (по имени)"
+
     return "Другое"
 
 

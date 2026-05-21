@@ -1,5 +1,6 @@
 import React, {useState, useEffect} from 'react';
 import {PieChart, Pie, Cell, Tooltip, Legend, ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid} from 'recharts';
+import {BrainCircuit, TrendingUp, Wallet, Lightbulb} from 'lucide-react';
 import './DashboardPage.css';
 
 const categoryData = [ //временные данные
@@ -21,9 +22,9 @@ const monthlyData = [ //временные данные
 ];
 
 const aiTips = [
-  { id: 1, title: 'Оптимизация подписок', text: 'Мы заметили, что вы платите за 3 стриминговых сервиса. Отказ от одного сэкономит вам 800 сом в месяц.', },
-  { id: 2, title: 'Аномалия в категории "Еда"', text: 'В этом месяце траты на рестораны выросли на 30%. Рекомендуем готовить дома чаще на следующей неделе.', },
-  { id: 3, title: 'Умный резерв', text: 'Ваш средний остаток позволяет откладывать 10% дохода. SmartBudget рекомендует настроить автокопилку.', }
+  { id: 1, title: 'Оптимизация подписок', text: 'Мы заметили, что вы платите за 3 стриминговых сервиса. Отказ от одного сэкономит вам 800 сом в месяц.', icon: <Wallet size={24} />},
+  { id: 2, title: 'Аномалия в категории "Еда"', text: 'В этом месяце траты на рестораны выросли на 30%. Рекомендуем готовить дома чаще на следующей неделе.', icon: <TrendingUp size={24} />},
+  { id: 3, title: 'Умный резерв', text: 'Ваш средний остаток позволяет откладывать 10% дохода. SmartBudget рекомендует настроить автокопилку.', icon: <Lightbulb size={24} />}
 ];
 
 export default function DashboardPage() {
@@ -64,11 +65,12 @@ export default function DashboardPage() {
       </div>
       <div className="ai-tips-section">
   <h2 className="ai-section-title">
-    Инсайты от SmartBudget AI
+    Наблюдения и Советы от SmartBudget AI
   </h2>
   <div className="ai-tips-grid">
     {aiTips.map((tip) => (
       <div key={tip.id} className="tip-card">
+        <div className="tip-icon-wrapper">{tip.icon}</div>
         <div className="tip-content">
           <h3>{tip.title}</h3>
           <p>{tip.text}</p>
