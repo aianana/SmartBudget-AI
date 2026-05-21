@@ -2,11 +2,11 @@ const prisma = require('../db');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 
-const JWT_SECRET = 'super_secret_key_123';
+const JWT_SECRET = 'super_secret_key_123'; 
 
 const register = async (req, res) => {
     try {
-        const { email, name, password } = req.body;
+        const { email, password } = req.body;
 
         const candidate = await prisma.user.findUnique({ where: { email } });
         if (candidate) {
@@ -16,11 +16,12 @@ const register = async (req, res) => {
         const hashedPassword = await bcrypt.hash(password, 10);
 
         const newUser = await prisma.user.create({
-            data: { email, name, password: hashedPassword }
+            data: { email, password: hashedPassword }
         });
 
         res.status(201).json({ message: "Пользователь успешно зарегистрирован" });
     } catch (error) {
+        console.error("Ошибка в функции register:", error);
         res.status(500).json({ error: "Ошибка при регистрации" });
     }
 };
@@ -43,9 +44,10 @@ const login = async (req, res) => {
 
         res.json({
             token,
-            user: { id: user.id, email: user.email, name: user.name }
+            user: { id: user.id, email: user.email }
         });
     } catch (error) {
+        console.error("🔥 Ошибка в функции login:", error);
         res.status(500).json({ error: "Ошибка при входе" });
     }
 };

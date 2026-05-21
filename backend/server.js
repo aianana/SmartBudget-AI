@@ -8,7 +8,16 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 
 app.use(cors());
+
 app.use(express.json());
+
+app.use((req, res, next) => {
+    console.log(`\n[${new Date().toLocaleTimeString()}] Входящий запрос: ${req.method} ${req.originalUrl}`);
+    if (Object.keys(req.body).length > 0) {
+        console.log('Данные (req.body):', req.body);
+    }
+    next(); 
+});
 
 const swaggerOptions = {
     swaggerDefinition: {
