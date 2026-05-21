@@ -5,8 +5,26 @@ const authController = require('../controllers/authController');
 const authMiddleware = require('../middleware/authMiddleware');
 
 const router = express.Router();
-const upload = multer({ dest: 'uploads/' });
 
+const fileFilter = (req, file, cb) => {
+    const allowedTypes = [
+        'application/pdf', 
+        'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', 
+        'application/vnd.ms-excel', 
+        'text/csv' 
+    ];
+
+    if (allowedTypes.includes(file.mimetype)) {
+        cb(null, true); 
+    } else {
+        cb(new Error('Неверный формат. Загрузите PDF, Excel или CSV.')); 
+    }
+};
+
+const upload = multer({ 
+    dest: 'uploads/',
+    fileFilter: fileFilter 
+});
 
 router.post('/auth/register', authController.register);
 
@@ -52,7 +70,7 @@ router.post('/auth/login', authController.login);
 router.get('/transactions', authMiddleware, budgetController.getTransactions);
 
 router.post('/upload', authMiddleware, upload.single('statement'), budgetController.uploadStatement);
-router.post('/users/:id/analyze', authMiddleware, budgetController.analyzeBudget);
-router.get('/users/:id/advices', authMiddleware, budgetController.getAdvices);
+router.post('/ask', authMiddleware, budgetController.askQuestion);
+router.get('/history', authMiddleware, budgetController.getHistory);
 
 module.exports = router;

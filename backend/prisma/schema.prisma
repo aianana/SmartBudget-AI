@@ -9,12 +9,27 @@ datasource db {
 
 // Таблица пользователей
 model User {
-  id           Int           @id @default(autoincrement())
-  email        String        @unique
-  name         String?
-  password     String        
-  transactions Transaction[]
-  advices      Advice[]
+  id            Int           @id @default(autoincrement())
+  email         String        @unique
+  password      String
+  filesUsed     Int           @default(0)   
+  questionsUsed Int           @default(0)   
+  statsJson     String?       
+  
+  transactions  Transaction[]
+  advices       Advice[]
+  histories     History[]     
+}
+
+// История вопросов и ответов
+model History {
+  id        Int      @id @default(autoincrement())
+  question  String
+  answer    String
+  createdAt DateTime @default(now())
+  
+  userId    Int
+  user      User     @relation(fields: [userId], references: [id])
 }
 
 // Таблица транзакций 
