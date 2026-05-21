@@ -1,5 +1,5 @@
 # parser.py
-# Парсер выписок: Bakai (xlsx), Optima (pdf), MBank (pdf), Simbank (pdf).
+# Парсер выписок: Bakai (xlsx), Optima (pdf), MBank (pdf, xls), Simbank (pdf).
 
 import io
 import os
@@ -12,7 +12,7 @@ from bank_configs import BANK_CONFIGS, TAIL_LINES
 def detect_file_type(filename: str, file_bytes: bytes) -> str:
     if file_bytes[:4] == b"%PDF":
         return "pdf"
-    # Старый xls — бинарный формат 
+    # Старый xls - бинарный формат
     if file_bytes[:8] == b"\xd0\xcf\x11\xe0\xa1\xb1\x1a\xe1":
         return "xls"
     name = filename.lower()
@@ -37,7 +37,7 @@ def read_file(file_bytes: bytes, filename: str):
         df = pd.read_excel(io.BytesIO(file_bytes), header=None)
         return df, "xlsx"
     elif ftype == "xls":
-        # Старый бинарный xls — нужен xlrd
+        # Старый бинарный xls - нужен xlrd
         df = pd.read_excel(io.BytesIO(file_bytes), header=None, engine="xlrd")
         return df, "xls"
     elif ftype == "pdf":
@@ -106,8 +106,8 @@ def parse_transactions(data, file_type: str, bank_config: dict) -> list:
     elif fmt == "pdf_simbank":
         return _parse_simbank_pdf(data, bank_config)
     return []
- 
-# MBANK XLS — старый бинарный xls (табличный)
+
+# MBANK XLS - старый бинарный xls (табличный)
 # Структура: дата | получатель | дебет | кредит | описание
 
 def _parse_mbank_xls(df: pd.DataFrame, config: dict) -> list:
@@ -132,7 +132,7 @@ def _parse_mbank_xls(df: pd.DataFrame, config: dict) -> list:
             ]):
                 continue
 
-            # Нет даты — служебная строка
+            # Нет даты - служебная строка
             if not date or not date_str.strip():
                 continue
 
@@ -177,7 +177,7 @@ def _parse_mbank_xls(df: pd.DataFrame, config: dict) -> list:
     print(f"[parser] MBank xls: {len(transactions)} транзакций")
     return transactions
 
-# BAKAI — xlsx (табличный формат)
+# BAKAI - xlsx (табличный формат)
 
 def _parse_bakai_xlsx(df: pd.DataFrame, config: dict) -> list:
     skip = config.get("skip_rows", 17)
@@ -201,7 +201,7 @@ def _parse_bakai_xlsx(df: pd.DataFrame, config: dict) -> list:
             if any(s in account_col_val for s in ["Итого", "Сальдо", "Эквивалент"]):
                 continue
 
-            # Нет даты — это служебная строка
+            # Нет даты - это служебная строка
             if not date or str(date).strip() == "":
                 continue
 
@@ -226,7 +226,7 @@ def _parse_bakai_xlsx(df: pd.DataFrame, config: dict) -> list:
     return transactions
 
 
-# OPTIMA — pdf (дата + описание + сумма в одной строке)
+# OPTIMA - pdf (дата + описание + сумма в одной строке)
 # Пример: Формат: "19.05.2026 Платеж по QR: Banda Panda -120 KGS 0.00 KGS"
 
 
@@ -280,7 +280,7 @@ def _parse_optima_pdf(text: str, config: dict) -> list:
 
 
 
-# MBANK — pdf (многострочный)
+# MBANK - pdf (многострочный)
 # Пример: Формат: "20.02.2026 11:38 Оплата по QR Тулпар: - 17,00"
 #         "Оплата услуг. Получатель: ..." (доп строки описания)
 
@@ -364,7 +364,7 @@ def _parse_mbank_pdf(text: str, config: dict) -> list:
     return transactions
 
 
-# SIMBANK — pdf (дата на одной строке, описание+сумма на следующей)
+# SIMBANK - pdf (дата на одной строке, описание+сумма на следующей)
 # Пример :Формат: "28-11-2025"
 #         "KAMPA.KG TUNGUCH -30,00 - 1 880,39"
 #         "11:35:58"
@@ -408,7 +408,7 @@ def _parse_simbank_pdf(text: str, config: dict) -> list:
         while j < len(lines) and j < i + 4:
             cur = lines[j].strip()
 
-            # Время — пропускаем (конец транзакции)
+            # Время - пропускаем (конец транзакции)
             if SIMBANK_TIME_RE.match(cur):
                 j += 1
                 break
