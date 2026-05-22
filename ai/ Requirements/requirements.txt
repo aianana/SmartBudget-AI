@@ -1,9 +1,0 @@
-pandas
-openpyxl
-xlrd
-pdfplumber
-google-genai
-python-dotenv
-fastapi
-python-multipart
-uvicorn
