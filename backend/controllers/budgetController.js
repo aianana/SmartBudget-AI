@@ -79,7 +79,7 @@ const askQuestion = async (req, res) => {
 
         console.log("Отправляю вопрос ИИ...");
 
-        const aiResponse = await axios.post(`${process.env.AI_URL}/api/ask', {
+        const aiResponse = await axios.post(`${process.env.AI_URL}/api/ask`, {
             question: question,
             stats: JSON.parse(user.statsJson), 
             history: user.histories 
