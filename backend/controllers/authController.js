@@ -47,7 +47,7 @@ const login = async (req, res) => {
             user: { id: user.id, email: user.email }
         });
     } catch (error) {
-        console.error("🔥 Ошибка в функции login:", error);
+        console.error("Ошибка в функции login:", error);
         res.status(500).json({ error: "Ошибка при входе" });
     }
 };
