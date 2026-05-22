@@ -4,6 +4,5 @@ COPY package*.json .
 RUN npm install
 COPY . .
 RUN npm run build
-EXPOSE 4173
-ENV PORT=4173
-CMD ["npm", "run", "preview", "--", "--host", "0.0.0.0", "--port", "4173"]
+EXPOSE 3000
+CMD ["npx", "vite", "preview", "--host", "0.0.0.0", "--port", "3000"]
