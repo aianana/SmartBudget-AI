@@ -13,50 +13,48 @@
 }
 
 .dashboard-header h1 {
-  font-size: 46px; 
-  font-weight: 800;
-  margin: 0;
-  background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
-  background-clip: content-box;
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  text-shadow: 0px 4px 20px rgba(139, 92, 246, 0.3);
+    font-size: 46px; 
+    font-weight: 800;
+    margin: 0;
+    background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+    background-clip: content-box;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    text-shadow: 0px 4px 20px rgba(139, 92, 246, 0.3);
 }
 
 .chart-card {
-  background: #ffffff;
-  border-radius: 20px;
-  padding: 24px;
-  border: 1px solid #f3f4f6;
-  box-shadow: 0 10px 25px -5px rgba(59, 130, 246, 0.1);
-  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    background: #ffffff;
+    border-radius: 20px;
+    padding: 24px;
+    border: 1px solid #f3f4f6;
+    box-shadow: 0 10px 25px -5px rgba(59, 130, 246, 0.1);
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* Эффект парения и свечения при наведении на саму карточку */
 .chart-card:hover {
-  transform: translateY(-8px);
-  box-shadow: 0 20px 35px -5px rgba(139, 92, 246, 0.25);
-  border-color: #ddd6fe;
+    transform: translateY(-8px);
+    box-shadow: 0 20px 35px -5px rgba(139, 92, 246, 0.25);
+    border-color: #ddd6fe;
 }
 
-/* Анимация увеличения кусочков графика при наведении */
 .recharts-pie-sector {
-  transition: all 0.3s ease;
-  cursor: pointer;
-  outline: none;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    outline: none;
 }
 
 .recharts-pie-sector:hover {
-  filter: drop-shadow(0px 0px 10px rgba(77, 77, 77, 0.3));
+    filter: drop-shadow(0px 0px 10px rgba(77, 77, 77, 0.3));
 }
 
 .recharts-bar-rectangle {
-  transition: all 0.3s ease;
-  cursor: pointer;
+    transition: all 0.3s ease;
+    cursor: pointer;
 }
 
 .recharts-bar-rectangle:hover {
-  filter: brightness(1.2) drop-shadow(0px 0px 12px rgba(139, 92, 246, 0.6));
+    filter: brightness(1.2) drop-shadow(0px 0px 12px rgba(139, 92, 246, 0.6));
 }
 
 .charts-grid {

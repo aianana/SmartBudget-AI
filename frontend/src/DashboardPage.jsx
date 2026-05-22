@@ -42,7 +42,7 @@ export default function DashboardPage() {
                 <Pie data={categoryData} cx="50%" cy="50%" innerRadius={60} outerRadius={100} paddingAngle={5} dataKey="value">
                   {categoryData.map((entry, index) => <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />)}
                 </Pie>
-                <Tooltip formatter={(value) => `${value} ₽`} />
+                <Tooltip formatter={(value) => `${value}  ⃀`} />
                 <Legend verticalAlign="bottom" height={36}/>
               </PieChart>
             </ResponsiveContainer>
@@ -56,7 +56,7 @@ export default function DashboardPage() {
                   <CartesianGrid strokeDasharray="3 3" vertical={false} />
                   <XAxis dataKey="name" axisLine={false} tickLine={false} />
                   <YAxis axisLine={false} tickLine={false} />
-                  <Tooltip cursor={{fill: '#f3f4f6'}} formatter={(value) => `${value} ₽`} />
+                  <Tooltip cursor={{fill: '#f3f4f6'}} formatter={(value) => `${value} ⃀`} />
                  <Bar dataKey="Расходы" fill="#3b82f6" radius={[4, 4, 0, 0]} barSize={40} />
                </BarChart>
               </ResponsiveContainer>
