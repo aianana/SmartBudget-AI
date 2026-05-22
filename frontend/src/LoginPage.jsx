@@ -35,6 +35,7 @@ export default function LoginPage() {
         throw new Error('Ошибка авторизации. Проверьте данные.');
       }
       const data = await response.json();
+      console.log("ОТВЕТ СЕРВЕРА:", data);
       localStorage.setItem('token', data.token);
       if (data.userId) {
         localStorage.setItem('userId', data.userId);
