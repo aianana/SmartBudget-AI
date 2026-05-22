@@ -21,9 +21,9 @@ jobs:
       - name: Deploy backend to Railway
         env:
           RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
-        run: railway up --service backend --project ${{ secrets.RAILWAY_PROJECT_ID }} --environment production
+        run: railway up --service SmartBudget-AI --project ${{ secrets.RAILWAY_PROJECT_ID }} --environment production
 
       - name: Deploy frontend to Railway
         env:
           RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
-        run: railway up --service frontend --project ${{ secrets.RAILWAY_PROJECT_ID }} --environment production
+        run: railway up --service endearing-enjoyment --project ${{ secrets.RAILWAY_PROJECT_ID }} --environment production
