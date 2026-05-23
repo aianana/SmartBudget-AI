@@ -1,6 +1,6 @@
 import React, {useState} from 'react';
 import {useNavigate, useLocation} from 'react-router-dom';
-import {LogIn, UserPlus, Lock, Mail, User} from 'lucide-react';
+import {LogIn, UserPlus, Lock, Mail} from 'lucide-react';
 import './LoginPage.css';
 
 const API_URL = import.meta.env.VITE_API_URL;
@@ -9,7 +9,6 @@ export default function LoginPage() {
   const [isLogin, setIsLogin] = useState(true);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [name, setName] = useState('');
 
   const navigate = useNavigate();
   const location = useLocation();
@@ -21,9 +20,7 @@ export default function LoginPage() {
 
     try {
       const endpoint = isLogin ? '/api/auth/login' : '/api/auth/register';
-      const bodyData = isLogin 
-        ? { email, password } 
-        : { email, password, name };
+      const bodyData = { email, password };
       
       const response = await fetch(`${API_URL}${endpoint}`, {
         method: 'POST',
@@ -67,22 +64,6 @@ export default function LoginPage() {
         </p>
 
         <form className="login-form" onSubmit={handleSubmit}>
-          {!isLogin && (
-            <div className="input-group">
-              <label>Ваше имя</label>
-              <div className="input-wrapper">
-                <User className="input-icon" size={18} />
-                <input 
-                  type="text" 
-                  placeholder="Азамат" 
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  required 
-                />
-              </div>
-            </div>
-          )}
-
           <div className="input-group">
             <label>Email</label>
             <div className="input-wrapper">
@@ -119,7 +100,8 @@ export default function LoginPage() {
 
         <p className="login-toggle-text">
           {isLogin ? 'Впервые у нас?' : 'Уже есть аккаунт?'}
-          <button 
+          <button
+            type="button"
             className="login-toggle-btn" 
             onClick={() => setIsLogin(!isLogin)}
           >
