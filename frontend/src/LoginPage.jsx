@@ -14,15 +14,41 @@ export default function LoginPage() {
 
   const uploadedFile = location.state?.uploadedFile;
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // backend
+    try {
+      const endpoint = isLogin ? '/api/auth/login' : '/api/auth/register';
+      const bodyData = isLogin 
+        ? { email, password } 
+        : { email, password, name };
+      const API_URL = import.meta.env.VITE_API_URL;
+      const response = await fetch(`${API_URL}${endpoint}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(bodyData),
+      });
 
-    if (uploadedFile) {
-      navigate('/dashboard');
-    } else {
-      navigate('/');
+      if (!response.ok) {
+        throw new Error('Ошибка авторизации. Проверьте данные.');
+      }
+      const data = await response.json();
+      console.log("ОТВЕТ СЕРВЕРА:", data);
+      localStorage.setItem('token', data.token);
+      if (data.userId) {
+        localStorage.setItem('userId', data.userId);
+      }
+      if (uploadedFile) {
+        navigate('/dashboard', { state: { uploadedFile } });
+      } else {
+        navigate('/dashboard');
+      }
+
+    } catch (error) {
+      console.error(error);
+      alert(error.message);
     }
   };
 
@@ -46,7 +72,7 @@ export default function LoginPage() {
                 <User className="input-icon" size={18} />
                 <input 
                   type="text" 
-                  placeholder="Иван" 
+                  placeholder="Азамат" 
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   required 
