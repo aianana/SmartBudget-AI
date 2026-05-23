@@ -3,6 +3,8 @@ import {useNavigate, useLocation} from 'react-router-dom';
 import {LogIn, UserPlus, Lock, Mail, User} from 'lucide-react';
 import './LoginPage.css';
 
+const API_URL = import.meta.env.VITE_API_URL;
+
 export default function LoginPage() {
   const [isLogin, setIsLogin] = useState(true);
   const [email, setEmail] = useState('');
@@ -22,7 +24,7 @@ export default function LoginPage() {
       const bodyData = isLogin 
         ? { email, password } 
         : { email, password, name };
-      const API_URL = import.meta.env.VITE_API_URL;
+      
       const response = await fetch(`${API_URL}${endpoint}`, {
         method: 'POST',
         headers: {
