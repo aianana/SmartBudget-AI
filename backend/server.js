@@ -63,13 +63,18 @@ app.get('/api/health', (req, res) => {
 });
 
 const { logAction } = require('./utils/auditLog');
-const HONEYPOT_PATHS = ['/api/.env', '/api/admin/secret', '/api/config', '/api/backup'];
-HONEYPOT_PATHS.forEach(path => {
-    app.all(path, async (req, res) => {
-        console.warn(`HONEYPOT TRIGGERED: ${req.method} ${path} from ${req.ip}`);
-        await logAction(null, 'HONEYPOT_TRIGGERED', req.ip, `${req.method} ${path}`);
-        res.status(403).json({ error: "Forbidden" });
-    });
+
+app.all('/.env', async (req, res) => {
+    await logAction(null, 'HONEYPOT_TRIGGERED', req.ip, `${req.method} /.env`);
+    res.status(403).json({ error: "Forbidden" });
+});
+app.all('/admin/secret', async (req, res) => {
+    await logAction(null, 'HONEYPOT_TRIGGERED', req.ip, `${req.method} /admin/secret`);
+    res.status(403).json({ error: "Forbidden" });
+});
+app.all('/backup', async (req, res) => {
+    await logAction(null, 'HONEYPOT_TRIGGERED', req.ip, `${req.method} /backup`);
+    res.status(403).json({ error: "Forbidden" });
 });
 
 app.use('/api', budgetRoutes);
