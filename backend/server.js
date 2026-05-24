@@ -63,6 +63,22 @@ app.get('/api/health', (req, res) => {
 
 app.use('/api', budgetRoutes);
 
+
+const HONEYPOT_PATHS = ['/api/.env', '/api/admin/secret', '/api/config', '/api/backup'];
+
+HONEYPOT_PATHS.forEach(path => {
+    app.all(path, async (req, res) => {
+        console.warn(`HONEYPOT TRIGGERED: ${req.method} ${path} from ${req.ip}`);
+        
+        //логируем в audit_logs
+        const { logAction } = require('./utils/auditLog');
+        await logAction(null, 'HONEYPOT_TRIGGERED', req.ip, `${req.method} ${path}`);
+        
+        //отвечаем 403 чтобы не спугнуть бота
+        res.status(403).json({ error: "Forbidden" });
+    });
+});
+
 app.listen(PORT, () => {
     console.log(`Сервер бэкенда запущен на порту ${PORT}`);
     console.log(`Документация доступна по адресу: http://localhost:${PORT}/api-docs`);
