@@ -4,6 +4,8 @@ import {PieChart, Pie, Cell, Tooltip, Legend, ResponsiveContainer, BarChart, Bar
 import {BrainCircuit, TrendingUp, Wallet, Lightbulb, ArrowUpRight, ArrowDownLeft, Landmark, FileText} from 'lucide-react';
 import './DashboardPage.css';
 
+const API_URL = import.meta.env.VITE_API_URL || '';
+
 const COLORS = ['#5395ff', '#04d972', '#f59e0b', '#ef4444', '#85009c', '#ffe600', '#bbff00', '#f30069'];
 
 export default function DashboardPage() {
@@ -15,12 +17,18 @@ export default function DashboardPage() {
   const [categoryData, setCategoryData] = useState([]);
   const [comparisonData, setComparisonData] = useState([]);
   const [aiInsights, setAiInsights] = useState([]);
-  
+
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
 
   useEffect(() => {
     if (!uploadedFile) return;
+
+    const token = localStorage.getItem('token');
+    if (!token) {
+      navigate('/login', { state: { uploadedFile } });
+      return;
+    }
 
     const analyzeFile = async () => {
       setIsLoading(true);
@@ -29,10 +37,8 @@ export default function DashboardPage() {
       const formData = new FormData();
       formData.append('statement', uploadedFile);
 
-      const token = localStorage.getItem('token');
-
       try {
-        const response = await fetch('/api/upload', { 
+        const response = await fetch(`${API_URL}/api/upload`, {
           method: 'POST',
           headers: {
             'Authorization': `Bearer ${token}`
@@ -43,10 +49,12 @@ export default function DashboardPage() {
         const jsonResponse = await response.json();
 
         if (!response.ok) {
+          if (response.status === 401 || response.status === 403) {
+            localStorage.removeItem('token');
+            throw new Error(jsonResponse.message || jsonResponse.error || 'Сессия истекла. Войдите снова.');
+          }
           throw new Error(jsonResponse.message || 'Не удалось проанализировать файл. Попробуйте еще раз.');
         }
-
-        console.log("ОТВЕТ СЕРВЕРА:", jsonResponse);
 
         const data = jsonResponse.data;
 
@@ -61,12 +69,12 @@ export default function DashboardPage() {
           positive: data.positive || "Нет данных."
         });
 
-        const transformedCategories = data.categories 
+        const transformedCategories = data.categories
           ? Object.entries(data.categories).map(([name, details]) => ({
               name: name,
               value: details.total
             }))
-          : []; 
+          : [];
         setCategoryData(transformedCategories);
 
         setComparisonData([
@@ -74,7 +82,7 @@ export default function DashboardPage() {
           { name: 'Расходы', Сумма: data.total_expenses || 0 }
         ]);
 
-        setAiInsights(data.tips || []);
+        setAiInsights(Array.isArray(data.tips) ? data.tips : []);
 
       } catch (err) {
         console.error("Поймана ошибка:", err);
@@ -85,7 +93,7 @@ export default function DashboardPage() {
     };
 
     analyzeFile();
-  }, [uploadedFile]);
+  }, [uploadedFile, navigate]);
 
   if (isLoading) {
     return (
@@ -170,7 +178,7 @@ export default function DashboardPage() {
               </PieChart>
             </ResponsiveContainer>
           </div>
-        </div> 
+        </div>
 
         <div className="chart-card">
           <h2 className="chart-title">Соотношение бюджета</h2>
