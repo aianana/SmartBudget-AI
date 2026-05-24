@@ -62,11 +62,6 @@ app.get('/api/health', (req, res) => {
     res.json({ status: "ok", message: "Server is running!" });
 });
 
-app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocs)); 
-app.get('/api/health', (req, res) => {
-    res.json({ status: "ok", message: "Server is running!" });
-});
-
 const { logAction } = require('./utils/auditLog');
 const HONEYPOT_PATHS = ['/api/.env', '/api/admin/secret', '/api/config', '/api/backup'];
 HONEYPOT_PATHS.forEach(path => {
