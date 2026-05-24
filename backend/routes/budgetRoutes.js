@@ -3,6 +3,7 @@ const multer = require('multer');
 const budgetController = require('../controllers/budgetController');
 const authController = require('../controllers/authController');
 const authMiddleware = require('../middleware/authMiddleware');
+const { authLimiter } = require('../middleware/rateLimiter');
 
 const router = express.Router();
 
@@ -47,7 +48,7 @@ const upload = multer({
  *       200:
  *         description: Пользователь успешно создан
  */
-router.post('/auth/register', authController.register);
+router.post('/auth/register', authLimiter, authController.register);
 
 
 /**
@@ -72,7 +73,7 @@ router.post('/auth/register', authController.register);
  *         description: Успешный вход, возвращает токен
  */
 
-router.post('/auth/login', authController.login);
+router.post('/auth/login', authLimiter, authController.login);
 
 /**
  * @swagger
