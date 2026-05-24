@@ -7,6 +7,7 @@ const { generalLimiter, authLimiter } = require('./middleware/rateLimiter');
 const helmet = require('helmet');
 
 const app = express();
+app.set('trust proxy', 1);
 app.use(helmet());
 const PORT = process.env.PORT || 3000;
 
@@ -61,23 +62,22 @@ app.get('/api/health', (req, res) => {
     res.json({ status: "ok", message: "Server is running!" });
 });
 
-app.use('/api', budgetRoutes);
+const { logAction } = require('./utils/auditLog');
 
-
-const HONEYPOT_PATHS = ['/api/.env', '/api/admin/secret', '/api/config', '/api/backup'];
-
-HONEYPOT_PATHS.forEach(path => {
-    app.all(path, async (req, res) => {
-        console.warn(`HONEYPOT TRIGGERED: ${req.method} ${path} from ${req.ip}`);
-        
-        //логируем в audit_logs
-        const { logAction } = require('./utils/auditLog');
-        await logAction(null, 'HONEYPOT_TRIGGERED', req.ip, `${req.method} ${path}`);
-        
-        //отвечаем 403 чтобы не спугнуть бота
-        res.status(403).json({ error: "Forbidden" });
-    });
+app.all('/.env', async (req, res) => {
+    await logAction(null, 'HONEYPOT_TRIGGERED', req.ip, `${req.method} /.env`);
+    res.status(403).json({ error: "Forbidden" });
 });
+app.all('/admin/secret', async (req, res) => {
+    await logAction(null, 'HONEYPOT_TRIGGERED', req.ip, `${req.method} /admin/secret`);
+    res.status(403).json({ error: "Forbidden" });
+});
+app.all('/backup', async (req, res) => {
+    await logAction(null, 'HONEYPOT_TRIGGERED', req.ip, `${req.method} /backup`);
+    res.status(403).json({ error: "Forbidden" });
+});
+
+app.use('/api', budgetRoutes);
 
 app.listen(PORT, () => {
     console.log(`Сервер бэкенда запущен на порту ${PORT}`);
