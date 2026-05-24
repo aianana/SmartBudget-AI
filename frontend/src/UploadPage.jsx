@@ -101,7 +101,7 @@ export default function UploadPage() {
             </p>
           </div>
           <div className="feature-image">
-            <img src="https://placehold.co/500x350/eef2ff/6366f1?text=Аналитика+и+Графики" alt="Аналитика бюджета" />
+            <img src="/wallet.png" alt="Аналитика бюджета" />
           </div>
         </div>
 
@@ -115,7 +115,7 @@ export default function UploadPage() {
             </p>
           </div>
           <div className="feature-image">
-            <img src="https://placehold.co/500x350/fffbeb/d97706?text=Советы+от+Нейросети" alt="ИИ Советы" />
+            <img src="/brain.png" alt="ИИ Советы" />
           </div>
         </div>
 
@@ -129,7 +129,7 @@ export default function UploadPage() {
             </p>
           </div>
           <div className="feature-image">
-            <img src="https://placehold.co/500x350/f0fdf4/16a34a?text=Безопасность+Данных" alt="Безопасность" />
+            <img src="/lock.png" alt="Безопасность" />
           </div>
         </div>
       </div>
