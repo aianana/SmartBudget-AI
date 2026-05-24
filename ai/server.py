@@ -44,9 +44,9 @@ def health_check():
     }
 
 
-# Эндпоинт 1 — анализ выписки
+# Эндпоинт 1 - анализ выписки
 
-@app.post("/analyze")
+@app.post("/api/upload")
 async def analyze(file: UploadFile):
     """
     Принимает файл выписки, возвращает разбор + советы.
@@ -88,21 +88,21 @@ async def analyze(file: UploadFile):
 
     return result
 
-# Эндпоинт 2 — вопрос про финансы
+# Эндпоинт 2 - вопрос про финансы
 
 class AskRequest(BaseModel):
     """
     Backend присылает статистику + вопрос + историю.
-    stats   — статистика из прошлого /analyze (Backend хранит её в БД)
-    question — текст вопроса
-    history — список прошлых вопросов-ответов (или пустой список)
+    stats   - статистика из прошлого /analyze (Backend хранит её в БД)
+    question - текст вопроса
+    history - список прошлых вопросов-ответов (или пустой список)
     """
     stats: dict
     question: str
     history: list = []
 
 
-@app.post("/ask")
+@app.post("/api/ask")
 async def ask(req: AskRequest):
     """
     Отвечает на вопрос пользователя про его финансы.
