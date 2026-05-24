@@ -7,6 +7,7 @@ const { generalLimiter, authLimiter } = require('./middleware/rateLimiter');
 const helmet = require('helmet');
 
 const app = express();
+app.set('trust proxy', 1);
 app.use(helmet());
 const PORT = process.env.PORT || 3000;
 
