@@ -180,7 +180,7 @@ export default function DashboardPage() {
           <div className="chart-wrapper">
             <ResponsiveContainer width="100%" height="100%">
               <PieChart>
-                <Pie data={categoryData} cx="50%" cy="50%" innerRadius={60} outerRadius={100} paddingAngle={5} dataKey="value">
+                <Pie data={categoryData} cx="50%" cy="50%" innerRadius="40%" outerRadius="75%" paddingAngle={5} dataKey="value">
                   {categoryData.map((entry, index) => <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />)}
                 </Pie>
                 <Tooltip formatter={(value) => `${value.toLocaleString()} сом`} />
