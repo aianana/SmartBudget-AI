@@ -3,6 +3,7 @@ const cors = require('cors');
 const budgetRoutes = require('./routes/budgetRoutes');
 const swaggerJsDoc = require('swagger-jsdoc');
 const swaggerUi = require('swagger-ui-express');
+const { generalLimiter, authLimiter } = require('./middleware/rateLimiter');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -12,6 +13,7 @@ app.use(cors({
   credentials: true,
 }));
 app.use(express.json());
+app.use('/api', generalLimiter);
 
 app.use((req, res, next) => {
     console.log(`\n[${new Date().toLocaleTimeString()}] Входящий запрос: ${req.method} ${req.originalUrl}`);
