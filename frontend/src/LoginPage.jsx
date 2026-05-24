@@ -3,7 +3,9 @@ import {useNavigate, useLocation} from 'react-router-dom';
 import {LogIn, UserPlus, Lock, Mail} from 'lucide-react';
 import './LoginPage.css';
 
-const API_URL = import.meta.env.VITE_API_URL;
+const API_URL = import.meta.env.PROD 
+  ? 'https://smartbudget-ai-production-d837.up.railway.app' 
+  : '';
 
 export default function LoginPage() {
   const [isLogin, setIsLogin] = useState(true);

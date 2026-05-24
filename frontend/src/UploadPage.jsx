@@ -54,50 +54,20 @@ export default function UploadPage() {
   };
 
   return (
-    <div className="upload-container" style={{ position: 'relative', paddingTop: '60px' }}>
-      {/* ОБНОВЛЕННАЯ ШАПКА */}
-      <header style={{ 
-        position: 'absolute', top: 0, left: 0, width: '100%', 
-        display: 'flex', justifyContent: 'flex-end', 
-        padding: '20px', boxSizing: 'border-box' 
-      }}>
+    <div className="upload-container">
+      <header className="upload-top-bar">
         {isAuthenticated ? (
-          /* Если авторизован: показываем Дашборд и Выход */
-          <div style={{ display: 'flex', gap: '10px' }}>
-            <button 
-              onClick={() => navigate('/dashboard')}
-              style={{ 
-                display: 'flex', alignItems: 'center', gap: '8px', 
-                cursor: 'pointer', padding: '10px 16px', 
-                borderRadius: '8px', border: 'none', 
-                backgroundColor: '#6366f1', color: 'white', fontWeight: '600'
-              }}
-            >
+          <div className="auth-buttons-group">
+            <button className="header-btn primary" onClick={() => navigate('/dashboard')}>
               <User size={18} />
               Дашборд
             </button>
-            <button 
-              onClick={handleLogout}
-              style={{ 
-                cursor: 'pointer', padding: '10px 16px', 
-                borderRadius: '8px', border: '1px solid #ef4444', 
-                backgroundColor: 'transparent', color: '#ef4444', fontWeight: '600'
-              }}
-            >
+            <button className="header-btn danger" onClick={handleLogout}>
               Выйти
             </button>
           </div>
         ) : (
-          /* Если НЕ авторизован: показываем только Войти */
-          <button 
-            onClick={() => navigate('/login')}
-            style={{ 
-              display: 'flex', alignItems: 'center', gap: '8px', 
-              cursor: 'pointer', padding: '10px 16px', 
-              borderRadius: '8px', border: 'none', 
-              backgroundColor: '#6366f1', color: 'white', fontWeight: '600'
-            }}
-          >
+          <button className="header-btn primary" onClick={() => navigate('/login')}>
             <User size={18} />
             Войти
           </button>
@@ -118,6 +88,50 @@ export default function UploadPage() {
         <div className="dropzone-text">Перетащите файл сюда</div>
         <button className="upload-btn">Выбрать файл</button>
         <input ref={inputRef} type="file" className="file-input" onChange={handleChange} accept=".csv, .xlsx, .pdf" />
+      </div>
+
+      <div className="features-section">
+        <div className="feature-block">
+          <div className="feature-text">
+            <h2>Забудьте о ручном учете расходов</h2>
+            <p>
+              Больше не нужно вбивать каждую покупку в таблицу. SmartBudget AI автоматически 
+              распознает вашу банковскую выписку, классифицирует транзакции с помощью нейросетей 
+              и показывает наглядные графики ваших трат.
+            </p>
+          </div>
+          <div className="feature-image">
+            <img src="https://placehold.co/500x350/eef2ff/6366f1?text=Аналитика+и+Графики" alt="Аналитика бюджета" />
+          </div>
+        </div>
+
+        <div className="feature-block reverse">
+          <div className="feature-text">
+            <h2>Персональные инсайты от ИИ</h2>
+            <p>
+              Наш алгоритм не просто строит диаграммы. Он анализирует ваше финансовое поведение, 
+              находит неочевидные утечки бюджета (например, слишком много подписок или чашек кофе) 
+              и дает персональные советы, как накопить на вашу цель быстрее.
+            </p>
+          </div>
+          <div className="feature-image">
+            <img src="https://placehold.co/500x350/fffbeb/d97706?text=Советы+от+Нейросети" alt="ИИ Советы" />
+          </div>
+        </div>
+
+        <div className="feature-block">
+          <div className="feature-text">
+            <h2>Абсолютная безопасность данных</h2>
+            <p>
+              Мы ценим вашу приватность. SmartBudget AI не подключается к вашим банковским аккаунтам 
+              напрямую и не сохраняет файлы выписок. Данные анализируются в оперативной памяти 
+              и мгновенно удаляются после генерации отчета.
+            </p>
+          </div>
+          <div className="feature-image">
+            <img src="https://placehold.co/500x350/f0fdf4/16a34a?text=Безопасность+Данных" alt="Безопасность" />
+          </div>
+        </div>
       </div>
     </div>
   );
