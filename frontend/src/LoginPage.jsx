@@ -15,7 +15,7 @@ export default function LoginPage() {
 
   const uploadedFile = location.state?.uploadedFile;
 
-  const handleSubmit = async (e) => {
+ const handleSubmit = async (e) => {
     e.preventDefault();
 
     try {
@@ -29,16 +29,26 @@ export default function LoginPage() {
         },
         body: JSON.stringify(bodyData),
       });
+      const data = await response.json();
 
       if (!response.ok) {
-        throw new Error('Ошибка авторизации. Проверьте данные.');
+        throw new Error(data.error || 'Ошибка авторизации. Проверьте данные.');
       }
-      const data = await response.json();
+
       console.log("ОТВЕТ СЕРВЕРА:", data);
-      localStorage.setItem('token', data.token);
-      if (data.userId) {
-        localStorage.setItem('userId', data.userId);
+
+      if (!isLogin) {
+        alert("Успешно! Теперь войдите с вашими данными.");
+        setIsLogin(true);
+        return;
       }
+
+      localStorage.setItem('token', data.token);
+      
+      if (data.user && data.user.id) {
+        localStorage.setItem('userId', data.user.id); 
+      }
+
       if (uploadedFile) {
         navigate('/dashboard', { state: { uploadedFile } });
       } else {
