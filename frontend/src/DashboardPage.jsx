@@ -4,7 +4,7 @@ import {PieChart, Pie, Cell, Tooltip, Legend, ResponsiveContainer, BarChart, Bar
 import {BrainCircuit, TrendingUp, Wallet, Lightbulb, ArrowUpRight, ArrowDownLeft, Landmark, FileText} from 'lucide-react';
 import './DashboardPage.css';
 
-const API_URL = import.meta.env.VITE_API_URL || '';
+const API_URL = 'https://smartbudget-ai-production-d837.up.railway.app';
 
 const COLORS = ['#5395ff', '#04d972', '#f59e0b', '#ef4444', '#85009c', '#ffe600', '#bbff00', '#f30069'];
 
