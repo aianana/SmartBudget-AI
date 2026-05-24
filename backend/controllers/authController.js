@@ -8,6 +8,10 @@ const register = async (req, res) => {
     try {
         const { email, password } = req.body;
 
+        if (!email || !password) {
+            return res.status(400).json({ error: "Email и пароль обязательны" });
+        }
+
         const candidate = await prisma.user.findUnique({ where: { email } });
         if (candidate) {
             return res.status(400).json({ error: "Пользователь с таким email уже существует" });
@@ -19,7 +23,14 @@ const register = async (req, res) => {
             data: { email, password: hashedPassword }
         });
 
-        res.status(201).json({ message: "Пользователь успешно зарегистрирован" });
+       
+        const token = jwt.sign({ userId: newUser.id }, JWT_SECRET, { expiresIn: '24h' });
+
+        res.status(201).json({
+            message: "Пользователь успешно зарегистрирован",
+            token,
+            user: { id: newUser.id, email: newUser.email }
+        });
     } catch (error) {
         console.error("Ошибка в функции register:", error);
         res.status(500).json({ error: "Ошибка при регистрации" });
@@ -29,6 +40,10 @@ const register = async (req, res) => {
 const login = async (req, res) => {
     try {
         const { email, password } = req.body;
+
+        if (!email || !password) {
+            return res.status(400).json({ error: "Email и пароль обязательны" });
+        }
 
         const user = await prisma.user.findUnique({ where: { email } });
         if (!user) {
