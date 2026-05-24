@@ -10,6 +10,13 @@ export default function UploadPage() {
 
   const isAuthenticated = !!localStorage.getItem('token');
 
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+    localStorage.removeItem('userId'); 
+    navigate('/'); 
+    window.location.reload();
+  };
+
   const handleProfileClick = () => {
     if (isAuthenticated) {
       navigate('/dashboard');
@@ -48,24 +55,53 @@ export default function UploadPage() {
 
   return (
     <div className="upload-container" style={{ position: 'relative', paddingTop: '60px' }}>
+      {/* ОБНОВЛЕННАЯ ШАПКА */}
       <header style={{ 
         position: 'absolute', top: 0, left: 0, width: '100%', 
         display: 'flex', justifyContent: 'flex-end', 
         padding: '20px', boxSizing: 'border-box' 
       }}>
-        <button 
-          onClick={handleProfileClick}
-          style={{ 
-            display: 'flex', alignItems: 'center', gap: '8px', 
-            cursor: 'pointer', padding: '10px 16px', 
-            borderRadius: '8px', border: 'none', 
-            backgroundColor: '#6366f1', color: 'white', 
-            fontWeight: '600', transition: '0.2s'
-          }}
-        >
-          <User size={18} />
-          {isAuthenticated ? 'Дашборд' : 'Войти'}
-        </button>
+        {isAuthenticated ? (
+          /* Если авторизован: показываем Дашборд и Выход */
+          <div style={{ display: 'flex', gap: '10px' }}>
+            <button 
+              onClick={() => navigate('/dashboard')}
+              style={{ 
+                display: 'flex', alignItems: 'center', gap: '8px', 
+                cursor: 'pointer', padding: '10px 16px', 
+                borderRadius: '8px', border: 'none', 
+                backgroundColor: '#6366f1', color: 'white', fontWeight: '600'
+              }}
+            >
+              <User size={18} />
+              Дашборд
+            </button>
+            <button 
+              onClick={handleLogout}
+              style={{ 
+                cursor: 'pointer', padding: '10px 16px', 
+                borderRadius: '8px', border: '1px solid #ef4444', 
+                backgroundColor: 'transparent', color: '#ef4444', fontWeight: '600'
+              }}
+            >
+              Выйти
+            </button>
+          </div>
+        ) : (
+          /* Если НЕ авторизован: показываем только Войти */
+          <button 
+            onClick={() => navigate('/login')}
+            style={{ 
+              display: 'flex', alignItems: 'center', gap: '8px', 
+              cursor: 'pointer', padding: '10px 16px', 
+              borderRadius: '8px', border: 'none', 
+              backgroundColor: '#6366f1', color: 'white', fontWeight: '600'
+            }}
+          >
+            <User size={18} />
+            Войти
+          </button>
+        )}
       </header>
 
       <div className="upload-header">
