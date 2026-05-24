@@ -1,12 +1,37 @@
 import React, {useState, useRef} from 'react';
 import {useNavigate} from 'react-router-dom';
-import {UploadCloud} from 'lucide-react';
+import {UploadCloud, User} from 'lucide-react';
 import './UploadPage.css';
 
 export default function UploadPage() {
   const [dragActive, setDragActive] = useState(false);
   const inputRef = useRef(null);
   const navigate = useNavigate();
+
+  const isAuthenticated = !!localStorage.getItem('token');
+
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+    localStorage.removeItem('userId'); 
+    navigate('/'); 
+    window.location.reload();
+  };
+
+  const handleProfileClick = () => {
+    if (isAuthenticated) {
+      navigate('/dashboard');
+    } else {
+      navigate('/login');
+    }
+  };
+
+  const processFile = (file) => {
+    if (isAuthenticated) {
+      navigate('/dashboard', { state: { uploadedFile: file } });
+    } else {
+      navigate('/login', { state: { uploadedFile: file } });
+    }
+  };
 
   const handleDrag = (e) => {
     e.preventDefault(); e.stopPropagation();
@@ -17,25 +42,73 @@ export default function UploadPage() {
   const handleDrop = (e) => {
     e.preventDefault(); e.stopPropagation(); setDragActive(false);
     if (e.dataTransfer.files && e.dataTransfer.files[0]) {
-      const file = e.dataTransfer.files[0];
-      navigate('/login', { state: { uploadedFile: file } });
+      processFile(e.dataTransfer.files[0]);
     }
   };
 
   const handleChange = (e) => {
     e.preventDefault();
     if (e.target.files && e.target.files[0]) {
-      const file = e.target.files[0];
-      navigate('/login', { state: { uploadedFile: file } });
+      processFile(e.target.files[0]);
     }
   };
 
   return (
-    <div className="upload-container">
+    <div className="upload-container" style={{ position: 'relative', paddingTop: '60px' }}>
+      {/* ОБНОВЛЕННАЯ ШАПКА */}
+      <header style={{ 
+        position: 'absolute', top: 0, left: 0, width: '100%', 
+        display: 'flex', justifyContent: 'flex-end', 
+        padding: '20px', boxSizing: 'border-box' 
+      }}>
+        {isAuthenticated ? (
+          /* Если авторизован: показываем Дашборд и Выход */
+          <div style={{ display: 'flex', gap: '10px' }}>
+            <button 
+              onClick={() => navigate('/dashboard')}
+              style={{ 
+                display: 'flex', alignItems: 'center', gap: '8px', 
+                cursor: 'pointer', padding: '10px 16px', 
+                borderRadius: '8px', border: 'none', 
+                backgroundColor: '#6366f1', color: 'white', fontWeight: '600'
+              }}
+            >
+              <User size={18} />
+              Дашборд
+            </button>
+            <button 
+              onClick={handleLogout}
+              style={{ 
+                cursor: 'pointer', padding: '10px 16px', 
+                borderRadius: '8px', border: '1px solid #ef4444', 
+                backgroundColor: 'transparent', color: '#ef4444', fontWeight: '600'
+              }}
+            >
+              Выйти
+            </button>
+          </div>
+        ) : (
+          /* Если НЕ авторизован: показываем только Войти */
+          <button 
+            onClick={() => navigate('/login')}
+            style={{ 
+              display: 'flex', alignItems: 'center', gap: '8px', 
+              cursor: 'pointer', padding: '10px 16px', 
+              borderRadius: '8px', border: 'none', 
+              backgroundColor: '#6366f1', color: 'white', fontWeight: '600'
+            }}
+          >
+            <User size={18} />
+            Войти
+          </button>
+        )}
+      </header>
+
       <div className="upload-header">
         <h1>SmartBudget AI</h1>
         <p>Загрузите банковскую выписку (CSV, XLSX, PDF) для умной аналитики</p>
       </div>
+      
       <div 
         className={`dropzone ${dragActive ? "active" : ""}`}
         onDragEnter={handleDrag} onDragLeave={handleDrag} onDragOver={handleDrag} onDrop={handleDrop}
