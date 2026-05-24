@@ -4,8 +4,10 @@ const budgetRoutes = require('./routes/budgetRoutes');
 const swaggerJsDoc = require('swagger-jsdoc');
 const swaggerUi = require('swagger-ui-express');
 const { generalLimiter, authLimiter } = require('./middleware/rateLimiter');
+const helmet = require('helmet');
 
 const app = express();
+app.use(helmet());
 const PORT = process.env.PORT || 3000;
 
 app.use(cors({
