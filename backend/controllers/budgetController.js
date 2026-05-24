@@ -3,20 +3,32 @@ const fs = require('fs');
 const axios = require('axios');
 const FormData = require('form-data');
 
-const AI_URL = process.env.AI_URL || 'http://localhost:5000';
+const AI_URL = process.env.AI_URL || 'http://localhost:8000';
+
+const safeUnlink = (filePath) => {
+    try {
+        if (filePath && fs.existsSync(filePath)) fs.unlinkSync(filePath);
+    } catch (e) {
+        console.error("Не удалось удалить временный файл:", e.message);
+    }
+};
 
 const uploadStatement = async (req, res) => {
     try {
-        const userId = req.userId; 
+        const userId = req.userId;
 
         if (!req.file) {
             return res.status(400).json({ message: "Пожалуйста, загрузите файл выписки." });
         }
 
         const user = await prisma.user.findUnique({ where: { id: userId } });
-        
+        if (!user) {
+            safeUnlink(req.file.path);
+            return res.status(404).json({ message: "Пользователь не найден." });
+        }
+
         if (user.filesUsed >= 2) {
-            fs.unlinkSync(req.file.path); 
+            safeUnlink(req.file.path);
             return res.status(403).json({ message: "Лимит файлов исчерпан. Оформите подписку." });
         }
 
@@ -25,21 +37,26 @@ const uploadStatement = async (req, res) => {
 
         console.log("Отправляю файл на анализ ИИ...");
 
-        const aiResponse = await axios.post(`${AI_URL}/api/upload`, formData, {
-            headers: { ...formData.getHeaders() }
-        });
+        let aiResponse;
+        try {
+            aiResponse = await axios.post(`${AI_URL}/api/upload`, formData, {
+                headers: { ...formData.getHeaders() },
+                maxBodyLength: Infinity,
+                maxContentLength: Infinity,
+            });
+        } finally {
+            safeUnlink(req.file.path);
+        }
 
         const stats = aiResponse.data;
 
         await prisma.user.update({
             where: { id: userId },
             data: {
-                filesUsed: { increment: 1 }, 
-                statsJson: JSON.stringify(stats) 
+                filesUsed: { increment: 1 },
+                statsJson: JSON.stringify(stats)
             }
         });
-
-        if (fs.existsSync(req.file.path)) fs.unlinkSync(req.file.path);
 
         res.status(200).json({
             message: "Выписка успешно проанализирована!",
@@ -48,26 +65,34 @@ const uploadStatement = async (req, res) => {
 
     } catch (error) {
         console.error("Ошибка при обработке файла:", error.message);
-        if (req.file && fs.existsSync(req.file.path)) fs.unlinkSync(req.file.path); 
+        safeUnlink(req.file && req.file.path);
+
+        const aiDetail = error.response?.data?.detail;
+        if (aiDetail) {
+            return res.status(error.response.status || 502).json({ message: aiDetail });
+        }
         res.status(500).json({ message: "Ошибка сервера при анализе выписки." });
     }
 };
 
 
-
 const askQuestion = async (req, res) => {
     try {
         const userId = req.userId;
-        const { question } = req.body; 
+        const { question } = req.body;
 
-        if (!question) {
+        if (!question || !question.trim()) {
             return res.status(400).json({ message: "Введите вопрос." });
         }
 
-        const user = await prisma.user.findUnique({ 
+        const user = await prisma.user.findUnique({
             where: { id: userId },
-            include: { histories: true } 
+            include: { histories: { orderBy: { createdAt: 'asc' } } }
         });
+
+        if (!user) {
+            return res.status(404).json({ message: "Пользователь не найден." });
+        }
 
         if (user.questionsUsed >= 3) {
             return res.status(403).json({ message: "Лимит вопросов исчерпан. Оформите подписку." });
@@ -77,12 +102,17 @@ const askQuestion = async (req, res) => {
             return res.status(400).json({ message: "Сначала загрузите выписку для анализа." });
         }
 
+        const history = (user.histories || []).map(h => ({
+            question: h.question,
+            answer: h.answer
+        }));
+
         console.log("Отправляю вопрос ИИ...");
 
         const aiResponse = await axios.post(`${AI_URL}/api/ask`, {
             question: question,
-            stats: JSON.parse(user.statsJson), 
-            history: user.histories 
+            stats: JSON.parse(user.statsJson),
+            history: history
         });
 
         const answerText = aiResponse.data.answer;
@@ -111,11 +141,11 @@ const askQuestion = async (req, res) => {
 
 const getHistory = async (req, res) => {
     try {
-        const userId = req.userId; 
+        const userId = req.userId;
 
         const history = await prisma.history.findMany({
             where: { userId: userId },
-            orderBy: { createdAt: 'desc' } 
+            orderBy: { createdAt: 'desc' }
         });
 
         res.status(200).json(history);
@@ -127,9 +157,9 @@ const getHistory = async (req, res) => {
 
 const getTransactions = async (req, res) => {
     try {
-        const userId = req.userId; 
+        const userId = req.userId;
         const transactions = await prisma.transaction.findMany({
-            where: { userId: userId }, 
+            where: { userId: userId },
             orderBy: { date: 'desc' }
         });
         res.status(200).json(transactions);

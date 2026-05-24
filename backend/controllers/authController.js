@@ -4,12 +4,20 @@ const jwt = require('jsonwebtoken');
 
 const JWT_SECRET = process.env.JWT_SECRET;
 
+if (!JWT_SECRET) {
+    throw new Error("JWT_SECRET не задан в переменных окружения. Запуск прерван.");
+}
+
 const register = async (req, res) => {
     try {
         const { email, password } = req.body;
 
         if (!email || !password) {
             return res.status(400).json({ error: "Email и пароль обязательны" });
+        }
+
+        if (password.length < 6) {
+            return res.status(400).json({ error: "Пароль должен быть не короче 6 символов" });
         }
 
         const candidate = await prisma.user.findUnique({ where: { email } });
@@ -23,7 +31,6 @@ const register = async (req, res) => {
             data: { email, password: hashedPassword }
         });
 
-       
         const token = jwt.sign({ userId: newUser.id }, JWT_SECRET, { expiresIn: '24h' });
 
         res.status(201).json({
