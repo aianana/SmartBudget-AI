@@ -21,7 +21,9 @@ app.use('/api', generalLimiter);
 app.use((req, res, next) => {
     console.log(`\n[${new Date().toLocaleTimeString()}] Входящий запрос: ${req.method} ${req.originalUrl}`);
     if (req.body && Object.keys(req.body).length > 0) {
-        console.log('Данные (req.body):', req.body);
+        const safebody = { ...req.body };
+        if (safebody.password) safebody.password = '***';
+        console.log('Данные (req.body):', safebody);
     }
     next(); 
 });
