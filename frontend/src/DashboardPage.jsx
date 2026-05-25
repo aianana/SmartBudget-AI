@@ -1,7 +1,7 @@
 import React, {useState, useEffect} from 'react';
 import {useLocation, useNavigate} from 'react-router-dom';
 import {PieChart, Pie, Cell, Tooltip, Legend, ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid} from 'recharts';
-import {BrainCircuit, TrendingUp, Wallet, Lightbulb, ArrowUpRight, ArrowDownLeft, Landmark, FileText} from 'lucide-react';
+import {BrainCircuit, TrendingUp, Wallet, Lightbulb, ArrowUpRight, ArrowDownLeft, Landmark, FileText, User} from 'lucide-react';
 import './DashboardPage.css';
 
 const API_URL = import.meta.env.PROD 
@@ -14,6 +14,13 @@ export default function DashboardPage() {
   const location = useLocation();
   const navigate = useNavigate();
   const uploadedFile = location.state?.uploadedFile;
+
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+    localStorage.removeItem('userId'); 
+    navigate('/'); 
+    window.location.reload();
+  };
 
   const [stats, setStats] = useState(null);
   const [categoryData, setCategoryData] = useState([]);
@@ -137,6 +144,23 @@ export default function DashboardPage() {
 
   return (
     <div className="dashboard-container">
+
+      <header className="dashboard-top-bar">
+        <button 
+          className="action-button nav-btn" 
+          onClick={() => navigate('/')}
+        >
+          <User size={18} />
+          На главную
+        </button>
+        <button 
+          className="action-button danger-btn" 
+          onClick={handleLogout}
+        >
+          Выйти
+        </button>
+      </header>
+
       <div className="dashboard-header">
         <div className="dashboard-title-group">
           <h1>Аналитика расходов</h1>
