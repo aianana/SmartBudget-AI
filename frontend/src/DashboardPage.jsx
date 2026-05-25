@@ -99,30 +99,38 @@ export default function DashboardPage() {
 
   if (isLoading) {
     return (
-      <div className="loading-container">
-        <BrainCircuit size={80} className="loading-icon-pulse ai-icon" />
-        <h2>SmartBudget AI анализирует вашу выписку...</h2>
-        <p className="loading-text-sub">Выделяем категории, ищем аномалии и готовим персональные советы.</p>
+      <div className="dashboard-centered-page">
+        <div className="status-card">
+          <div className="icon-pulse-wrapper">
+            <BrainCircuit size={50} color="#6366f1" className="loading-icon-pulse" />
+          </div>
+          <h2 className="gradient-text">SmartBudget AI думает...</h2>
+          <p className="status-text">Искусственный интеллект распределяет транзакции по категориям и ищет инсайты.</p>
+        </div>
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="status-container">
-        <h2 className="error-title">Произошла ошибка</h2>
-        <p>{error}</p>
-        <button className="action-button" onClick={() => navigate('/')}>Вернуться на главную</button>
+      <div className="dashboard-centered-page">
+        <div className="status-card error-card">
+          <h2 className="error-title">Произошла ошибка</h2>
+          <p className="status-text">{error}</p>
+          <button className="action-button" onClick={() => navigate('/')}>Вернуться на главную</button>
+        </div>
       </div>
     );
   }
 
   if (!stats) {
     return (
-      <div className="status-container no-data">
-        <h2>Нет данных для отображения</h2>
-        <p>Пожалуйста, перейдите на главную страницу и загрузите выписку.</p>
-        <button className="action-button" onClick={() => navigate('/')}>Загрузить файл</button>
+      <div className="dashboard-centered-page">
+        <div className="status-card">
+          <h2>Нет данных</h2>
+          <p className="status-text">Пожалуйста, загрузите банковскую выписку для начала анализа.</p>
+          <button className="action-button" onClick={() => navigate('/')}>Загрузить файл</button>
+        </div>
       </div>
     );
   }
@@ -172,7 +180,7 @@ export default function DashboardPage() {
           <div className="chart-wrapper">
             <ResponsiveContainer width="100%" height="100%">
               <PieChart>
-                <Pie data={categoryData} cx="50%" cy="50%" innerRadius={60} outerRadius={100} paddingAngle={5} dataKey="value">
+                <Pie data={categoryData} cx="50%" cy="50%" innerRadius="40%" outerRadius="75%" paddingAngle={5} dataKey="value">
                   {categoryData.map((entry, index) => <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />)}
                 </Pie>
                 <Tooltip formatter={(value) => `${value.toLocaleString()} сом`} />

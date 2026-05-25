@@ -65,6 +65,9 @@ export default function LoginPage() {
 
   return (
     <div className="login-container">
+      <div className="upload-header login-logo">
+        <h1>SmartBudget AI</h1>
+      </div>
       <div className="login-card">
         <h2 className="login-title">
           {isLogin ? 'Войти в аккаунт' : 'Создать профиль'}

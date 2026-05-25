@@ -187,8 +187,13 @@
     transform: translateY(-5px);
 }
 
-/* Адаптивность для мобильных телефонов и небольших экранов */
 @media (max-width: 768px) {
+
+    .upload-header h1 {
+        font-size: 36px; /* Было 67px */
+        line-height: 1.2;
+    }
+    
     .feature-block, .feature-block.reverse {
         flex-direction: column;
         text-align: center;
